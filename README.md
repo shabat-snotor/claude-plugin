@@ -2,7 +2,7 @@
 
 Snotor's shared AI workflow commands, packaged for one-line installation and central updates. The commands are project agnostic: best practices in each body, project specifics (platform tags, tracker key, code host, accessibility requirements) in a labeled Project settings block inside the skill.
 
-Contents of this repository: the plugin itself under `plugins/snotor-commands/`, a single-file plugin package at `dist/snotor-commands-plugin.zip` for upload-based installs, and per-skill zips under `claude-ai-uploads/` for the chat product.
+Contents of this repository: the plugin itself under `plugins/snotor-commands/`, and `scripts/package.sh`, which builds upload archives on demand into a git-ignored `build/` directory. No built archives are committed, because a committed archive silently goes stale the first time a command changes.
 
 What is inside: `/jira-ticket` (tickets in the team's formats, with parent lookup and a duplicate check), `/doc-review` (design-document review verified against the code), and the six workflow starters (`/work-on`, `/investigate`, `/interview`, `/explain-diff`, `/write-sql`, `/feature-doc`). The Team command library page on the team's internal wiki documents when each is used.
 
@@ -46,13 +46,13 @@ Copy `skills/` and `commands/` from `plugins/snotor-commands/` into your project
 
 Two ways, and the file upload is the one that always works.
 
-**From a file (no repository access needed).** On the Plugins page under Customize, choose the upload option and select `dist/snotor-commands-plugin.zip` from this repository. Everything installs in one step. The cost is that updates are manual: re-download and re-upload the zip when the commands change.
+**From a file (no repository access needed).** On the Plugins page under Customize, run `scripts/package.sh` (or ask a developer to), then choose the upload option and select `build/snotor-commands-plugin.zip`. Everything installs in one step. The cost is that updates are manual: re-download and re-upload the zip when the commands change.
 
 **From this repository (updates on a button).** On the Plugins page select Add marketplace and enter `shabat-snotor/claude-plugin` (the plain owner/repo shorthand works), then install `snotor-commands` and press Update on the marketplace whenever you want the latest. Because this repository is public, Cowork reaches it without any GitHub connection, which is the reason it is public.
 
 ## Install on claude.ai
 
-The chat product does not use plugins at all and does not read `.claude` folders; upload a zip from `claude-ai-uploads/` through Settings and its Skills section instead, one per command you want. The zips are the same skills with the `argument-hint` line already removed, since that field is rejected on upload; `doc-review.zip` is the command re-wrapped as a skill for the same reason.
+The chat product does not use plugins at all and does not read `.claude` folders; run `scripts/package.sh` and upload the archives from `build/claude-ai-skills/` through Settings and its Skills section, one per command you want. The zips are the same skills with the `argument-hint` line already removed, since that field is rejected on upload; `doc-review.zip` is the command re-wrapped as a skill for the same reason.
 
 ## Organization-wide distribution (the end state)
 
