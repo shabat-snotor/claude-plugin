@@ -1,0 +1,16 @@
+{
+  "name": "snotor",
+  "owner": {
+    "name": "snotor"
+  },
+  "plugins": [
+    {
+      "name": "snotor-commands",
+      "source": "./plugins/snotor-commands",
+      "description": "Snotor's shared AI workflow commands"
+    }
+  ],
+  "metadata": {
+    "description": "Snotor's shared AI workflow commands for Claude Code and Cowork"
+  }
+}
