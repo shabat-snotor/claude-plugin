@@ -22,7 +22,7 @@ When the drafts are ready and creating them in Jira looks like the likely next s
 
 Every ticket gets:
 
-1. **A concise title, starting with the platform tag.** Every ticket title begins with exactly one of the platform tags listed in Project settings at the bottom of this file. Derive the tag from where the required changes land, not from who reported the issue. When the work genuinely spans platforms, prefer splitting into one ticket per platform (see the splitting rule under "Length and brevity"); if one ticket must cover both, tag the primary platform and say so in the body. After the tag: short enough to scan in a board view, specific enough to distinguish from similar work, area first when helpful ("[BE] Auth: Support SSO via SAML" rather than "[BE] Add SSO").
+1. **A concise title, starting with the platform tag.** Every ticket title begins with exactly one of the platform tags listed in Project settings at the bottom of this file. Derive the tag from where the required changes land, not from who reported the issue. When the work genuinely spans platforms, prefer splitting into one ticket per platform (see "Splitting"); if one ticket must cover both, tag the primary platform and say so in the body. After the tag: short enough to scan in a board view, specific enough to distinguish from similar work, area first when helpful ("[BE] Auth: Support SSO via SAML" rather than "[BE] Add SSO").
 
    One rendering caveat: `[FE](web)` is link syntax in Markdown, so in the draft it will display as a link labeled FE. That is expected; the raw text is what gets pasted into Jira's summary field, where it renders literally.
 
@@ -33,7 +33,7 @@ Every ticket gets:
 
    Pick the type from the first argument when the user names one: qa routes to the QA bug template, and feature or techdebt both route to the task template with the matching Specification flavor. Otherwise infer the type from the material and state which format you chose, so a wrong guess is caught in one glance. Read the matching template file before writing: it carries the per-section guidance and the exact output skeleton.
 
-3. **A parent.** Every ticket has a parent: a subtask's parent is its task, a task's parent is its epic, and a QA bug is typically filed as a bug subtask under the story or task whose behaviour it breaks. Find candidates per "Parent and duplicates" below and put a `Parent:` line with the key at the top of the draft. A draft without a parent is not finished; if no parent can be found or confirmed, say so explicitly and ask.
+3. **A parent.** Every ticket has a parent: a subtask's parent is its task, a task's parent is its epic, and a QA bug is typically filed as a bug subtask under the story or task whose behaviour it breaks. Find candidates per "Parent and duplicates" below and put a `Parent:` line with the key at the top of the draft. Attach to an existing parent whenever one fits; only propose a new parent under the hierarchy rules in "Splitting" below. A draft without a parent is not finished; if no parent can be found or confirmed, say so explicitly and ask.
 
 ## Parent and duplicates: the two allowed read-only Jira checks
 
@@ -51,17 +51,35 @@ Per-section length limits live in the template files. The rule is the same every
 
 When you have a large investigation behind the ticket, resist dumping it in. Compress to the decision and the direction. Cite a representative file or two, not every occurrence. If exhaustive detail is genuinely needed, that is a separate doc, not the ticket body.
 
-## Splitting: when one ticket must become two or more
+## Splitting: only along a real seam, never to hit a number
 
-A ticket is too big when a developer cannot deliver it as one reviewable change. Check for these before finalizing, and split when any of them holds:
+Default to one ticket. Splitting is justified only when the work has a natural seam, meaning each piece is something a developer could pick up, finish, and have verified on its own. These are real seams:
 
-- **More than about six Acceptance Criteria**, or more than about six Required changes bullets. Past that point the ticket is a project, not a task.
-- **The work spans platforms.** Backend plus frontend means one ticket per platform, each with its own tag (this is the same rule as the title tags).
-- **Independent shippability.** If a subset of the acceptance criteria could ship and be verified on its own, that subset is its own ticket.
-- **The title needs "and" to be accurate.** Two outcomes in the title is two tickets.
-- **A QA bug report describes more than one defect.** One ticket per defect, even when they were found in the same session; they will be fixed and verified separately.
+- **Separate deliverables.** Backend and frontend halves, or two applications, each delivered and reviewed separately.
+- **Independent shippability.** A subset that could ship alone and be verified alone, whether or not the rest ever lands.
+- **Two outcomes.** The title needs "and" to be accurate, because it describes two things a user would notice separately.
+- **Separate defects.** A QA report describing more than one defect: one ticket per defect, since they are fixed and verified separately.
 
-When a trigger fires, do not truncate and do not write the sprawling ticket anyway. Produce the split: two or more complete drafts, each self-contained per the rules above, with one line at the top of your response stating the split, the suggested order, and any dependency between them (which ticket blocks which). When the pieces are parts of one deliverable rather than independent work, structure the split as one parent task plus subtasks under it, so the hierarchy carries the relationship; otherwise draft sibling tickets under the same parent. Splitting is the deliverable in that case, not a failure to deliver one ticket.
+These are not seams, and splitting on them produces tickets nobody can work with: a long acceptance-criteria list that all describes one behaviour, the layers of one change (data-transfer object, service, controller), or the steps of one implementation. Size is a symptom to check, never a reason on its own; if a ticket is long but has no seam, it stays one ticket and you say so.
+
+Before splitting, state the seam in one sentence ("backend endpoint and mobile screen ship separately"). If you cannot name a seam that way, do not split.
+
+**Hierarchy rules.** A parent ticket exists to hold work that has genuinely separate parts, so:
+
+- **Never create a parent with one subtask.** A parent with a single child is pure overhead: two tickets to track one piece of work. If the split yields one real piece, it was not a split; write the single ticket.
+- **Two pieces are siblings, not a new hierarchy.** Draft them under the existing parent (the epic or task the work already belongs to) rather than inventing a parent to hold exactly two children.
+- **Create a new parent only at three or more subtasks**, and only when the pieces are parts of one deliverable that nobody would ship separately. The parent then carries the shared context and outcome, and each subtask carries one piece.
+- **Prefer an existing parent over a new one.** When an epic or task already covers this work, attach to it; new hierarchy is the last resort, not the default.
+
+**Grouping rules for a whole tree.** When drafting a set of tickets under one epic or initiative, rather than a single ticket:
+
+- **Group by domain, not by document.** Containers follow the part of the system the work touches: the service that owns it, or the data it changes. They do not follow how the source specification is chaptered. A specification with four use cases frequently becomes two or three containers, because several use cases touch the same rows in the same service. Ask what each piece changes, not which section it came from.
+- **Give containers short noun titles.** The name of the area ("Membership", "Content"), not a sentence describing the work inside it.
+- **Write the shared reasoning once, on the container.** The architecture, the context, and the decisions live on the parent; each child carries only its own piece. Never repeat the same background across siblings, because the copies drift the moment one is edited.
+- **Do not draft postponed work.** When a piece is explicitly deferred or blocked on something that does not exist yet, note it in the container rather than creating a ticket. A tracker full of tickets nobody can start is a tracker nobody trusts, and the note is enough to keep the gap visible.
+- **Get the unit of work right before the grouping.** The leaf tickets, each one deliverable and verifiable on its own, are what people actually work from; the containers above them are navigation. When the two disagree, keep the leaves and rearrange the containers.
+
+When you do split, produce complete drafts for every piece, each self-contained per the rules above, plus one line at the top stating the seam, the shape (siblings under an existing parent, or a new parent with its subtasks), the suggested order, and any dependency between them. Splitting is the deliverable in that case, not a failure to deliver one ticket.
 
 ## Working with different inputs
 
