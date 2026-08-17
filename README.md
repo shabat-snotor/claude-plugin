@@ -1,6 +1,6 @@
-# Snotor command plugin
+# Claude command plugin
 
-Snotor's shared AI workflow commands, packaged for one-line installation and central updates. The commands are project agnostic: best practices in each body, project specifics (platform tags, tracker key, code host, accessibility requirements) in a labeled Project settings block inside the skill.
+Claude's shared AI workflow commands, packaged for one-line installation and central updates. The commands are project agnostic: best practices in each body, project specifics (platform tags, tracker key, code host, accessibility requirements) in a labeled Project settings block inside the skill.
 
 Contents of this repository: the plugin itself under `plugins/snotor-commands/`, and `scripts/package.sh`, which builds upload archives on demand into a git-ignored `build/` directory. No built archives are committed, because a committed archive silently goes stale the first time a command changes.
 
