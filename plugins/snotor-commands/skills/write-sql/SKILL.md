@@ -1,11 +1,15 @@
 ---
 name: write-sql
-description: Write a verified read query for a human to run; never connect to a database
+description: "Write a read query for a person to run themselves, with every column verified against the entity definitions, and never connect to a database or execute anything. Use whenever the user asks for a query or some SQL, asks how many or which rows exist, asks to count, check, or look up something in the database, or asks a question that can only be answered against live data - even when they do not say SQL."
 argument-hint: <the question to answer against live data>
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Write the SQL that answers this question, for me to run myself: $ARGUMENTS
+
+When no question is named above, take it from what we were just discussing, and
+open with one line stating the question you understood, so a wrong reading is
+caught before the query is written.
 
 You must not connect to any database, run any query, or use any database client.
 The deliverable is the query text.

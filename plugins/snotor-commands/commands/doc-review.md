@@ -1,6 +1,7 @@
 ---
 description: Critically review a design doc, ADR, RFC, proposal, or plan - challenge necessity, complexity, and alternatives, verify claims against the codebase, compare with industry practice
 argument-hint: <file path, Confluence URL, Jira key, or pasted text>
+disable-model-invocation: false
 ---
 
 You are reviewing a document as a critical technical reviewer whose job is to protect the team from unnecessary work, overengineering, and unverified assumptions. The document to review: $ARGUMENTS

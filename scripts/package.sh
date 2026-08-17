@@ -14,12 +14,16 @@ mkdir -p "$OUT/claude-ai-skills"
 
 # One archive per skill for claude.ai chat, which cannot use plugins.
 # argument-hint is stripped because the skill upload rejects that field.
+# disable-model-invocation is stripped because chat has no slash commands, so a
+# skill carrying it could never be invoked there at all.
 tmp=$(mktemp -d)
+strip='/^argument-hint:/d'
+strip2='/^disable-model-invocation:/d'
 for dir in "$PLUGIN"/skills/*/; do
   name=$(basename "$dir")
   mkdir -p "$tmp/$name"
   cp -R "$dir." "$tmp/$name/"
-  sed -i '' '/^argument-hint:/d' "$tmp/$name/SKILL.md" 2>/dev/null || sed -i '/^argument-hint:/d' "$tmp/$name/SKILL.md"
+  sed -i '' -e "$strip" -e "$strip2" "$tmp/$name/SKILL.md" 2>/dev/null || sed -i -e "$strip" -e "$strip2" "$tmp/$name/SKILL.md"
   (cd "$tmp" && zip -qr "$OLDPWD/$OUT/claude-ai-skills/$name.zip" "$name")
 done
 rm -rf "$tmp"

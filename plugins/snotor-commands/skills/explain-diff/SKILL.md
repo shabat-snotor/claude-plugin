@@ -1,7 +1,7 @@
 ---
 name: explain-diff
-description: Walk through the current diff as if it has to be defended in review
-disable-model-invocation: true
+description: "Walk through the current diff as if it has to be defended in review, naming the weak parts rather than summarizing favourably. Use when the user asks what changed, asks to explain, review, or walk through the current diff, the working tree, or the branch, or wants to know what they are about to put in a pull request. Not for making the changes."
+disable-model-invocation: false
 ---
 
 Walk me through the current diff as though I have to defend it in review, and I

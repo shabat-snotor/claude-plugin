@@ -1,11 +1,15 @@
 ---
 name: feature-doc
-description: The handover document for a finished feature, with sections for integration, QA, and product
+description: "The handover document for a finished feature, grounded in the code, with a section each for integration, QA, and product. Use when the user asks to document or hand over a feature, a module, or a merged pull request, asks for integration or API notes for the web and mobile developers, asks what a tester should watch out for, or asks for a summary of what shipped for product or business readers."
 argument-hint: "<feature, module, or pull request; optionally lead with one audience: integration, qa, or product>"
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 Write the handover document for: $ARGUMENTS
+
+When nothing is named above, take the feature from what we have been working
+on, and name it in one line before you start, so a wrong subject is caught
+before the document is written.
 
 One document, up to three sections, each written for its own reader. Produce
 all three by default; when the first argument names one audience (integration,
