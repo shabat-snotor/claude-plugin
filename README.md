@@ -4,7 +4,7 @@ Claude's shared AI workflow commands, packaged for one-line installation and cen
 
 Contents of this repository: the plugin itself under `plugins/snotor-commands/`, and `scripts/package.sh`, which builds upload archives on demand into a git-ignored `build/` directory. No built archives are committed, because a committed archive silently goes stale the first time a command changes.
 
-What is inside: `/jira-ticket` (tickets in the team's formats, with parent lookup and a duplicate check), `/doc-review` (design-document review verified against the code), and the six workflow starters (`/work-on`, `/investigate`, `/interview`, `/explain-diff`, `/write-sql`, `/feature-doc`). The Team command library page on the team's internal wiki documents when each is used.
+What is inside: `/jira-ticket` (tickets in the team's formats, with parent lookup and a duplicate check), `/doc-review` (design-document review verified against the code), and the seven workflow starters (`/work-on`, `/investigate`, `/interview`, `/explain-diff`, `/write-sql`, `/feature-doc`, `/retro`). The Team command library page on the team's internal wiki documents when each is used.
 
 ## This repository is public
 
