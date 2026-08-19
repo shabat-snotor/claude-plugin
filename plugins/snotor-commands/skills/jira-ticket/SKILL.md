@@ -49,6 +49,8 @@ Tickets must be short. A developer should be able to read the whole thing in wel
 
 Per-section length limits live in the template files. The rule is the same everywhere: a section is a few sentences or a few short bullets, never an essay, and a section with nothing real to say is omitted rather than padded.
 
+Specification is where this fails most often. Three dense paragraphs of current state, measurements, and weighed alternatives is a design doc wearing a ticket's headings. Cap it at roughly 120 words and move the evidence out: if the reader needs the derivation to trust the direction, link it rather than inlining it.
+
 When you have a large investigation behind the ticket, resist dumping it in. Compress to the decision and the direction. Cite a representative file or two, not every occurrence. If exhaustive detail is genuinely needed, that is a separate doc, not the ticket body.
 
 ## Splitting: only along a real seam, never to hit a number
@@ -89,7 +91,7 @@ People will hand you all sorts of raw material. Here's how to handle it:
 
 - **Conversation excerpt or Slack thread**: Distill the decision and action items. Strip out the back-and-forth and extract the agreed-upon scope. If there were unresolved questions in the conversation, surface them in Edge Cases.
 
-- **Existing vague ticket that needs rewriting**: Preserve the original intent but restructure into the standard sections. Add specificity where the original was hand-wavy. If the original ticket is ambiguous enough that you're not sure what it means, say so and offer your best interpretation.
+- **Existing vague ticket that needs rewriting**: Preserve the original intent but restructure into the standard sections. Add specificity where the original was hand-wavy. If the original ticket is ambiguous enough that you're not sure what it means, ask the user which reading is right rather than shipping a draft built on a guess.
 
 ## Code formatting and links
 
@@ -148,13 +150,15 @@ Good examples (write like this):
 - "sorting logic is mixed into the filter class"
 - "the parameter is in the wrong layer"
 
-The ticket should be self-contained: someone picking it up shouldn't need to track you down and ask "what did you mean?" If there are genuine unknowns, call them out explicitly rather than leaving gaps the reader has to guess about.
+The ticket should be self-contained: someone picking it up shouldn't need to track you down and ask "what did you mean?"
+
+**A ticket never contains an open question.** No "Open question", no "TBD", no "to be decided", no "confirm with product", no section listing what you could not work out. A ticket is something a developer starts working from, and a question inside it means nobody can start. When a decision is genuinely unclear and different answers would produce different work, **ask the user in chat before writing the draft** and bake the answer in. Ask as many questions as it takes, in one round where possible; the questions are cheap and a ticket that has to be re-litigated in a comment thread is not. The only thing that may look like an unresolved item is a `Parent:` line that could not be verified because the tracker was unreachable, and a named follow-up that is deliberately out of scope.
 
 ## What not to do
 
 - Don't pad tickets with boilerplate or filler. If a section would just say "N/A" or repeat the title, leave it out.
 - Don't over-specify implementation details - leave room for the implementer's judgment.
-- Don't invent requirements that weren't in the input. If something is ambiguous, flag it as a question rather than making an assumption silently.
+- Don't invent requirements that weren't in the input. When something is ambiguous, ask the user in chat and write the answer into the ticket. Never make the assumption silently, and never park the ambiguity in the ticket body as an open question (see "Tone and style").
 - Don't use the user story format ("As a X, I want Y, so that Z") unless the user specifically asks for it - it often adds ceremony without clarity.
 - Don't create issues in the tracker, or run the Jira API discovery calls that lead there, unless the user explicitly asked for tracker creation. Default to producing the drafts. (See "Drafting vs. creating.")
 
