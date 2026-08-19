@@ -1,7 +1,7 @@
 ---
 name: jira-ticket
 argument-hint: <ticket type (bug, feature, tech debt) if known, then the raw material>
-description: "Write clear, well-structured Jira ticket descriptions from rough notes, conversation context, or vague existing tickets. Produces a ticket title and a structured description in the team's format for the ticket type: QA bug (Preconditions, Steps to reproduce, Actual results, Expected results) or task (Design, Specification, Required changes, Acceptance Criteria; one shared structure for both product/feature work and tech debt). Use this skill whenever the user mentions Jira tickets, writing tickets, creating issues, task descriptions for a backlog, turning notes into stories, or improving an existing ticket - even if they don't explicitly say Jira."
+description: "Write clear, well-structured Jira ticket descriptions from rough notes, conversation context, or vague existing tickets. Produces a ticket title and a structured description in the team's format for the ticket type: QA bug (Preconditions, Steps to reproduce, Actual results, Expected results) or task (Design, an unheaded specification, Required changes, Acceptance Criteria; one shared structure for both product/feature work and tech debt). Use this skill whenever the user mentions Jira tickets, writing tickets, creating issues, task descriptions for a backlog, turning notes into stories, or improving an existing ticket - even if they don't explicitly say Jira."
 ---
 
 # Jira Ticket Writer
@@ -29,9 +29,9 @@ Every ticket gets:
 2. **A structured description in the team's format for the ticket type.** There are two formats, one template file each in this skill's `templates/` directory:
 
    - **QA bug** - Preconditions, Steps to reproduce, Actual results, Expected results. For defects found in testing or behavior that contradicts a spec. Template: `${CLAUDE_SKILL_DIR}/templates/qa-bug.md`.
-   - **Task** - Design (only when there is a visual surface), Specification, Required changes, Acceptance Criteria. One shared structure for both product/feature work and tech debt; the template says how Specification reads for each flavor. Template: `${CLAUDE_SKILL_DIR}/templates/task.md`.
+   - **Task** - Design (only when there is a visual surface), then the specification as opening prose with no heading, then Required changes and Acceptance Criteria. One shared structure for both product/feature work and tech debt; the template says how the opening reads for each flavor. Template: `${CLAUDE_SKILL_DIR}/templates/task.md`.
 
-   Pick the type from the first argument when the user names one: qa routes to the QA bug template, and feature or techdebt both route to the task template with the matching Specification flavor. Otherwise infer the type from the material and state which format you chose, so a wrong guess is caught in one glance. Read the matching template file before writing: it carries the per-section guidance and the exact output skeleton.
+   Pick the type from the first argument when the user names one: qa routes to the QA bug template, and feature or techdebt both route to the task template with the matching flavor. Otherwise infer the type from the material and state which format you chose, so a wrong guess is caught in one glance. Read the matching template file before writing: it carries the per-section guidance and the exact output skeleton.
 
 3. **A parent.** Every ticket has a parent: a subtask's parent is its task, a task's parent is its epic, and a QA bug is typically filed as a bug subtask under the story or task whose behaviour it breaks. Find candidates per "Parent and duplicates" below and put a `Parent:` line with the key at the top of the draft. Attach to an existing parent whenever one fits; only propose a new parent under the hierarchy rules in "Splitting" below. A draft without a parent is not finished; if no parent can be found or confirmed, say so explicitly and ask.
 
@@ -49,7 +49,7 @@ Tickets must be short. A developer should be able to read the whole thing in wel
 
 Per-section length limits live in the template files. The rule is the same everywhere: a section is a few sentences or a few short bullets, never an essay, and a section with nothing real to say is omitted rather than padded.
 
-Specification is where this fails most often. Three dense paragraphs of current state, measurements, and weighed alternatives is a design doc wearing a ticket's headings. Cap it at roughly 120 words and move the evidence out: if the reader needs the derivation to trust the direction, link it rather than inlining it.
+The opening specification is where this fails most often. Three dense paragraphs of current state, measurements, and weighed alternatives is a design doc wearing a ticket's headings. Cap it at roughly 120 words and move the evidence out: if the reader needs the derivation to trust the direction, link it rather than inlining it.
 
 When you have a large investigation behind the ticket, resist dumping it in. Compress to the decision and the direction. Cite a representative file or two, not every occurrence. If exhaustive detail is genuinely needed, that is a separate doc, not the ticket body.
 
@@ -131,6 +131,22 @@ Examples (plain path as link text, no backticks inside the brackets):
 
 Symbols that are not file paths - a function, table, column, environment variable, or endpoint named without a file location - stay as plain backtick inline code (`` `likeThis` ``) with no link, because there is no single line to point at. Backtick code is correct there; the no-backticks rule above applies only to the text inside a link. If you know the file a symbol lives in, prefer citing it as a linked file reference over a bare symbol.
 
+### Link every ticket key and source document
+
+Every reference to a tracker issue is a Markdown link on the key: `[HUD-1234](https://hudd.atlassian.net/browse/HUD-1234)`, built from the tracker base URL in Project settings. A bare key is never acceptable, including a key you cite in passing inside a Required changes bullet. The description gets read in search results, in exports, and pasted into Slack, where nothing auto-links it, so a bare key costs the reader a search every time.
+
+Every reference to a use case, specification, design document, wireframe set, or any other document is a Markdown link to it, with a heading anchor when the document has one:
+
+```
+[Use case 2. Sign in](https://hudd.atlassian.net/wiki/spaces/Space/pages/123/Auth+and+Profile#Usecase2.Signin)
+```
+
+Never a bare "Use case 2", "screen 6", or "per the auth spec". A named reference with no link makes the reader go and find the document, and it stops meaning anything the moment that document is renumbered or reorganised.
+
+Get the URL before writing the ticket rather than leaving the link for later: an unlinked reference reads as finished, so nobody goes back to fix it. When something genuinely has no URL, name it in full and say where it lives instead of citing it by number alone.
+
+The Jira summary field is plain text, so a key in the title stays bare. This rule covers the description only.
+
 ## Tone and style
 
 **Never use em-dashes (Unicode U+2014) or en-dashes (U+2013) in the ticket output.** Use a regular hyphen `-` instead. If a pause needs stronger separation, use commas, parentheses, a colon, or split into two sentences - but never the long-dash characters. This is the most visible failure mode of this skill because the output gets pasted verbatim into Jira.
@@ -181,7 +197,7 @@ This is important because the whole point of the ticket is that the user can pas
 
 The rules above are project agnostic and reference the values here; reusing this skill elsewhere means editing this block, nothing else.
 
-- **Tracker:** Jira, project key `HUD`.
+- **Tracker:** Jira, project key `HUD`. Issue links are `https://hudd.atlassian.net/browse/<KEY>`.
 - **Platform tags:** `[BE]` backend services; `[FE](web)` the web app and admin panel; `[FE](mobile)` the mobile app.
 - **Code host:** `https://github.com/galdrdev/<repo>`, one repository per top-level workspace folder.
 - **Reference bug ticket:** HUD-3963 shows the QA bug format applied.
