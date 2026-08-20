@@ -16,18 +16,45 @@ Read only. Do not edit any file in this phase.
 Use subagents for any search that spans more than one service, so this session
 keeps room for the implementation.
 
-Find out:
-1. Does an equivalent already exist in this codebase? If it does, say so first,
-   with the path.
-2. What are the callers of the functions, endpoints, or services involved, and
-   what does each one assume?
-3. Which tests cover this path today?
-4. Which parts of the project and per-service instruction files apply? Quote them.
-5. What would the change actually touch, and is any of it expensive to reverse?
+**Start from the ticket. Do not re-derive it.** When the argument is a ticket
+key, read the ticket before touching the codebase. A ticket written to this
+team's standard already names the gap, the files and rules to reuse, the
+specification behind it, what is deliberately out of scope, and the acceptance
+criteria. That is the brief. Rebuilding it from the codebase spends the budget
+phase two needs and arrives at the same answer.
+
+Spot-check it rather than either trusting it or redoing it: one read or one grep
+per file, symbol, or rule the ticket names, enough to confirm it still exists
+and still says what the ticket claims. A claim that no longer holds is the most
+valuable thing in this phase, and it leads the report.
+
+Then spend the rest of the budget on the four things a ticket structurally
+cannot carry, because it is capped at a length that excludes them:
+
+1. **What this change breaks.** Every existing test touching the routes,
+   services, or helpers involved, and per hit whether it still passes and still
+   proves what its name claims. Hardcoded route lists, shared test helpers, and
+   assertions over generated documents are the usual casualties.
+2. **Where two rules collide.** The ticket's acceptance criteria read against
+   the instruction files and the per-module documentation. Quote both sides. A
+   collision is a decision, not a detail.
+3. **What is still undecided.** Anything the ticket left open, plus any fork the
+   ticket did not see.
+4. **Where the new code belongs**, when the ticket named the behaviour but not
+   the placement, and what the ownership and boundary rules force.
+
+Investigate from scratch only what the ticket does not answer, which is the
+normal case for a bare description rather than a key, and for a ticket that
+turns out to be thin. Say which of the two you are in. On that path, answer
+these as well: whether an equivalent already exists and where, who calls the
+code involved and what each caller assumes, which tests cover it today, which
+instruction-file sections apply, and what the change would touch that is
+expensive to reverse.
 
 Then stop and report:
 
-- **What I found**, with a file path and line number for every claim.
+- **What I found**, with a file path and line number for every claim, leading
+  with any ticket claim that no longer holds.
 - **Recommendation**, which must be one of: proceed as asked; proceed with a
   smaller change than asked, described; this is already done or unnecessary,
   with the evidence; this needs a decision I should not take alone, and why.
@@ -38,6 +65,19 @@ Then stop and report:
 
 If the change is too large to review in one sitting, say so and propose the
 first piece rather than proposing all of it.
+
+**Every decision that is mine to make gets asked, not described.** A decision is
+anything where two defensible answers would produce different code: a contract
+or schema shape, which of several behaviours is correct, whether a rule gets an
+exception, what a thing is named, whether something is in scope. Ask it with the
+question tool, one question per decision, with the options spelled out and your
+recommendation marked. Never leave a decision as a sentence in the report for me
+to notice; if it is buried in prose, it did not get asked. State your
+recommendation and the trade-off inside the options, so answering takes one
+click and not a conversation.
+
+Decisions you can settle yourself, because only one answer is defensible, are
+settled and reported in one line. Do not ask about those.
 
 Then wait. Do not write code until I answer.
 
@@ -69,6 +109,9 @@ Only after I say to go, and only the piece we agreed on.
   an audit.
 - No comments in the code.
 - Do not rename, reformat, or improve anything outside what we agreed.
+- If a decision surfaces mid-implementation that phase one did not reach, stop
+  and ask it with the question tool before writing the code that depends on it.
+  Do the parts that do not depend on the answer, and say what is waiting.
 
 Then report, in this order: what changed and where, which commands you ran and
 their actual output, what passed, what you skipped, and what you left out on
