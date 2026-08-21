@@ -9,22 +9,32 @@ Section guidance:
 - **Design** - only when the change has a visual surface: link the design
   source. Omit the section entirely otherwise; tech debt tickets almost never
   have one.
-- **The specification, which carries no heading of its own** - the
-  description opens straight into it. A heading reading "Specification"
-  only names what the paragraph already is, and costs a line every reader
-  scrolls past. What should be true when the ticket is done, and why.
-  **Hard cap: roughly 120 words, and at most two short paragraphs.** For a
-  feature: the behaviour from the user's point of view (what the user can do
-  and see, and when), in plain language a product person can confirm is what
-  they meant. For tech debt: one or two sentences on the current state
-  (concretely what is wrong or missing, no history lessons), then the target
-  state and the why (performance, reliability, developer experience).
-  Nothing else belongs here. Measured baselines, benchmark tables, rejected
-  alternatives, and the reasoning that produced the approach are derivation,
-  not specification: the chosen direction gets one clause and the evidence
-  goes in the merge request or a linked doc. When it runs long, the
-  excess is a Required changes bullet or an Acceptance Criteria line, not a
-  third paragraph.
+- **The specification. Two hard limits, and they are limits, not
+  preferences:**
+
+  1. **No heading of its own.** The description opens straight into the
+     prose. Never write a line reading "Specification", "Overview",
+     "Context", "Background", or "Summary" above it. A heading there only
+     names what the paragraph already is.
+  2. **At most two paragraphs and at most 120 words, counted.** Not "aim
+     for" - if there is a third paragraph, or the count is over, the ticket
+     is not finished. Count before moving on.
+
+  Inside those limits: what should be true when the ticket is done, and why.
+  For a feature, the behaviour from the user's point of view (what the user
+  can do and see, and when), in plain language a product person can confirm
+  is what they meant. For tech debt, one or two sentences on the current
+  state (concretely what is wrong or missing, no history lessons), then the
+  target state and the why (performance, reliability, developer experience).
+
+  **Where the excess goes, because it is always the same two places.** A
+  direction, a file, a table, a schema, an interface: Required changes. An
+  observable outcome or a rule someone tests: Acceptance Criteria. A
+  measured baseline, a benchmark table, a rejected alternative, or the
+  reasoning that produced the approach is derivation and belongs in the
+  merge request or a linked doc, not the ticket. Restating in the opening
+  what a bullet below already says is the most common way the cap gets
+  blown - cut the restatement, not the bullet.
 - **Required changes** - where the work lands (services, applications,
   endpoints, screens, key files) as short directional bullets. Direction, not
   a spec. Omit when the path is obvious; trust the implementer with the
@@ -48,7 +58,9 @@ Output skeleton:
 
 ...
 
-[the specification, one or two paragraphs, no heading]
+At most two paragraphs, at most 120 words, and no heading above them: the
+first section heading in the body is Design when there is one, and
+Required changes otherwise. This bracketed note is not literal text.
 
 ### Required changes
 

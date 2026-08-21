@@ -168,6 +168,8 @@ Good examples (write like this):
 
 The ticket should be self-contained: someone picking it up shouldn't need to track you down and ask "what did you mean?"
 
+**No dates, and no provenance for a decision.** State what is true and move on. Write "deferred", never "deferred by decision on 2026-08-20"; write "the eID gate is not built", never "ratified on 2026-08-13, see the decision log". The same applies to stamping your own research: "no ticket covers this" rather than "checked 2026-08-20, no ticket covers this". Jira already records when a thing was written and by whom, so a date in the body is noise on the day it is written and wrong a month later, and naming a decision's date or author invites the reader to go and re-litigate it instead of doing the work. Present-tense measurements stay allowed, exactly as the no-estimates rule has it: "the current p99 is 50ms" is an observation, not provenance.
+
 **A ticket never contains an open question.** No "Open question", no "TBD", no "to be decided", no "confirm with product", no section listing what you could not work out. A ticket is something a developer starts working from, and a question inside it means nobody can start. When a decision is genuinely unclear and different answers would produce different work, **ask the user in chat before writing the draft** and bake the answer in. Ask as many questions as it takes, in one round where possible; the questions are cheap and a ticket that has to be re-litigated in a comment thread is not. The only thing that may look like an unresolved item is a `Parent:` line that could not be verified because the tracker was unreachable, and a named follow-up that is deliberately out of scope.
 
 ## What not to do
