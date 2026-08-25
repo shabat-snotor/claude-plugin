@@ -20,7 +20,7 @@ Type these in any Claude Code session:
 
 ```
 /plugin marketplace add shabat-snotor/claude-plugin
-/plugin install snotor-commands@snotor
+/plugin install snotor-commands@claude-plugin
 ```
 
 Plugin commands are namespaced, so they appear as `/snotor-commands:jira-ticket`, `/snotor-commands:work-on`, and so on. Updates are automatic in spirit and one command in practice: the plugin is versioned by commit (no `version` field on purpose, the recommended setup for team plugins under active development), so every merge to this repository is a new version, picked up by auto-update or by `/plugin update`.
@@ -30,11 +30,11 @@ To onboard developers with zero instructions, add the marketplace to a shared re
 ```json
 {
   "extraKnownMarketplaces": {
-    "snotor": {
+    "claude-plugin": {
       "source": { "source": "github", "repo": "shabat-snotor/claude-plugin" }
     }
   },
-  "enabledPlugins": { "snotor-commands@snotor": true }
+  "enabledPlugins": { "snotor-commands@claude-plugin": true }
 }
 ```
 
