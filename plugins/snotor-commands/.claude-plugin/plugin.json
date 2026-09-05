@@ -1,6 +1,6 @@
 {
   "name": "snotor-commands",
-  "description": "Snotor's shared AI workflow commands: ticket writing, investigation, implementation, review, and handover documents. Project specifics live in each skill's Project settings block.",
+  "description": "Snotor's shared AI workflow commands: ticket writing, investigation, implementation, review, handover documents, and an always-on writing style that removes AI tells. Project specifics live in each skill's Project settings block.",
   "author": {
     "name": "snotor"
   }
