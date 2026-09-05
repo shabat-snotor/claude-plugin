@@ -201,6 +201,16 @@ The exact section skeleton comes from the template file for the chosen ticket ty
 
 This is important because the whole point of the ticket is that the user can paste it straight into Jira and have it look right. If the formatting doesn't work on paste, or the sections don't match what the team expects for that ticket type, the skill has failed its core job.
 
+## One line per ticket in the chat reply
+
+Whatever you produce - a single draft, a set of drafts, or tickets created in the tracker - the chat reply carries **one sentence per ticket**, and the ticket body carries none. The point is that somebody can scan the whole set in the chat window and know what each piece delivers without opening anything.
+
+- For a created ticket, lead with its linked key: `[DAYB-182](url) - the Core side of Centrifugo: channel design, token configuration, and the publish client.`
+- For a draft, lead with its title instead.
+- One sentence each, saying what the reader gets when that ticket is done. Not a restatement of the title, and not the acceptance criteria compressed.
+
+Keep it to the chat. Never add a summary line, an "in short", or a TL;DR to the description itself: the ticket already opens with its specification, and a second summary sitting above it is the first thing to go stale when the scope moves.
+
 ## Project settings (edit when reusing this skill in another project)
 
 The rules above are project agnostic and reference the values here; reusing this skill elsewhere means editing this block, nothing else.

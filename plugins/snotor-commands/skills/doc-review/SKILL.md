@@ -1,5 +1,6 @@
 ---
-description: Critically review a design doc, ADR, RFC, proposal, or plan - challenge necessity, complexity, and alternatives, verify claims against the codebase, compare with industry practice
+name: doc-review
+description: "Critically review a design doc, ADR, RFC, proposal, or plan - challenge necessity, complexity, and alternatives, verify claims against the codebase, and compare with industry practice. Use when the user asks to review, critique, sanity-check, or poke holes in a document, a design, an architecture decision, a proposal, or a plan, or asks whether an approach is overengineered or whether a simpler option exists."
 argument-hint: <file path, Confluence URL, Jira key, or pasted text>
 disable-model-invocation: false
 ---
