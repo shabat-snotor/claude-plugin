@@ -70,16 +70,32 @@ The hook is a Claude Code mechanism. In Cowork and on claude.ai the skill still 
 
 **If the library is distributed through organization settings, you do nothing.** The skills appear in Claude Code, Cowork, and claude.ai on their own, and pick up changes on their own once the marketplace is set to sync automatically. That is the intended state; the section below sets it up once.
 
-Until then, install once per person:
+Until then, install once per person. The two paths behave differently, and mixing them causes the confusion described under Cowork.
 
-- **Claude Code**
+- **Claude Code** (terminal, and the Code tab in the desktop app)
 
   ```
   /plugin marketplace add <owner>/<repo>
   /plugin install snotor-commands@claude-plugin
   ```
 
-- **Cowork** - Customize, then Plugins, then Add marketplace, then enter `<owner>/<repo>` and install `snotor-commands`. Press Update on the marketplace to pick up changes.
+  Auto-update is off by default for every marketplace that is not Anthropic's own, so this install is frozen at the commit you installed until you turn it on. In `/plugin`, open Marketplaces, choose `claude-plugin`, and select Enable auto-update. Or declare the marketplace in `~/.claude/settings.json` with the flag set, which is also the snippet to drop into a shared repository's `.claude/settings.json` so every teammate who trusts that folder is prompted to install and then stays current:
+
+  ```json
+  {
+    "extraKnownMarketplaces": {
+      "claude-plugin": {
+        "source": { "source": "github", "repo": "<owner>/<repo>" },
+        "autoUpdate": true
+      }
+    },
+    "enabledPlugins": { "snotor-commands@claude-plugin": true }
+  }
+  ```
+
+  With auto-update on, Claude Code checks the marketplace in the background shortly after a session starts and installs new versions to disk. The running session keeps what it loaded; the next session, or `/reload-plugins`, has the new version. From then on a merge to `main` reaches you without any command.
+
+- **Cowork, and the Plugins page of the desktop app** - Customize, then Plugins, then Add marketplace, then enter `<owner>/<repo>` and install `snotor-commands`. This copy is a snapshot taken at install time. It does not follow the repository; press Update on the marketplace to take a new snapshot. It is also handed to every Code tab session under the same plugin name, where it shadows a Claude Code install of the same plugin, so a developer who uses both sees the stale snapshot and not the current install. Developers should install through Claude Code only.
 
 Commands from a plugin are namespaced, so they appear as `/snotor-commands:jira-ticket` and so on.
 
