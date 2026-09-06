@@ -29,6 +29,17 @@ const PORTABLE = process.argv.includes('--portable');
 const DESC_CAP = 1536; // description + when_to_use, truncated past this in the skill listing.
 const DESC_COMFORTABLE = 1000;
 
+// A session-start hook that prints more than this many characters is not
+// injected: Claude Code saves the output to a file and injects a 2KB preview
+// instead, so most of the block never reaches the session and nothing warns.
+const HOOK_OUTPUT_CAP = 20000;
+// The block is printed with a preamble, and the cap is the harness's to change,
+// so the block itself has to stay well short of it.
+const ALWAYS_ON_ERROR = 16000;
+const ALWAYS_ON_COMFORTABLE = 12000;
+const ALWAYS_ON_START = '<!-- always-on:start -->';
+const ALWAYS_ON_END = '<!-- always-on:end -->';
+
 const errors = [];
 const warnings = [];
 const err = (where, msg) => errors.push(`${where}: ${msg}`);
@@ -139,6 +150,55 @@ function checkSkill(dir) {
 
   if (body.trim().length < 200) {
     warn(where, 'body is very short; a skill this thin usually belongs in the project instruction file instead');
+  }
+
+  checkAlwaysOnBlock(where, raw);
+
+  // Rules that moved into reference files still have to hold there.
+  for (const ref of referenceFiles(dir)) {
+    const refRaw = readFileSync(ref, 'utf8');
+    const refWhere = relative(ROOT, ref);
+    if (/[\u2014\u2013]/.test(refRaw)) {
+      err(refWhere, 'contains an em-dash or en-dash; house style is a plain hyphen');
+    }
+    const refSecret = /(ghp_|gho_|github_pat_|glpat-|sk-ant-|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----)/.exec(refRaw);
+    if (refSecret) err(refWhere, `looks like it contains a credential (${refSecret[1]})`);
+  }
+}
+
+// Every .md file under the skill directory other than SKILL.md itself.
+function referenceFiles(dir) {
+  const out = [];
+  const walk = (d) => {
+    for (const entry of readdirSync(d)) {
+      const full = join(d, entry);
+      if (statSync(full).isDirectory()) walk(full);
+      else if (entry.endsWith('.md') && full !== join(dir, 'SKILL.md')) out.push(full);
+    }
+  };
+  walk(dir);
+  return out;
+}
+
+// The block between the always-on markers is printed into every session by the
+// session-start hook, so its size decides whether the style arrives at all.
+function checkAlwaysOnBlock(where, raw) {
+  const start = raw.indexOf(ALWAYS_ON_START);
+  const end = raw.indexOf(ALWAYS_ON_END);
+  if (start === -1 && end === -1) return;
+  if (start === -1 || end === -1) {
+    err(where, `has only one always-on marker; the hook needs both ${ALWAYS_ON_START} and ${ALWAYS_ON_END}`);
+    return;
+  }
+  if (end < start) {
+    err(where, 'always-on end marker comes before the start marker');
+    return;
+  }
+  const size = raw.slice(start + ALWAYS_ON_START.length, end).length;
+  if (size > ALWAYS_ON_ERROR) {
+    err(where, `always-on block is ${size} characters; over ${ALWAYS_ON_ERROR} it risks the ${HOOK_OUTPUT_CAP}-character hook injection cap, past which Claude Code injects only a 2KB preview and silently drops the rest of the writing style`);
+  } else if (size > ALWAYS_ON_COMFORTABLE) {
+    warn(where, `always-on block is ${size} characters; under ${ALWAYS_ON_COMFORTABLE} keeps room under the ${HOOK_OUTPUT_CAP}-character hook injection cap and keeps the per-session cost down`);
   }
 }
 
