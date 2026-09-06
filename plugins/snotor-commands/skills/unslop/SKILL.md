@@ -14,14 +14,19 @@ documentation section of the rules.
 
 This skill works two ways:
 
-- **Always on.** The plugin's session-start hook prints the block between the
+- **Always on.** The plugin's session-start hook feeds the block between the
   always-on markers in this file into every Claude Code session, at startup, on
   resume, and after each compaction. Every reply, commit message, pull request
   description, ticket, code comment, and document follows it without being
-  asked. That block is a condensed form of the rules, kept well under the
-  20000-character limit on what a hook can inject; over it, Claude Code saves
-  the output to a file and injects only a 2KB preview, which silently drops
-  most of the style. `references/rules.md` holds the same rules in full.
+  asked. That block is a condensed form of the rules; `references/rules.md`
+  holds them in full.
+
+  The hook emits the block as JSON, in
+  `hookSpecificOutput.additionalContext`. Do not change it to print the block
+  on stdout: Claude Code truncates oversized plain hook stdout to a 2000
+  character preview and saves the rest to a file, so most of the style stops
+  arriving and nothing reports it. `scripts/validate.mjs` fails the build if
+  the two ever drift apart.
 - **Edit pass.** `/unslop` runs the process below over a specific text:
   $ARGUMENTS
 

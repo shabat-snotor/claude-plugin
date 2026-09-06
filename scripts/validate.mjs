@@ -29,14 +29,8 @@ const PORTABLE = process.argv.includes('--portable');
 const DESC_CAP = 1536; // description + when_to_use, truncated past this in the skill listing.
 const DESC_COMFORTABLE = 1000;
 
-// A session-start hook that prints more than this many characters is not
-// injected: Claude Code saves the output to a file and injects a 2KB preview
-// instead, so most of the block never reaches the session and nothing warns.
-const HOOK_OUTPUT_CAP = 20000;
-// The block is printed with a preamble, and the cap is the harness's to change,
-// so the block itself has to stay well short of it.
-const ALWAYS_ON_ERROR = 16000;
-const ALWAYS_ON_COMFORTABLE = 12000;
+const PLAIN_STDOUT_ERROR = 8000;
+const ALWAYS_ON_COMFORTABLE = 20000;
 const ALWAYS_ON_START = '<!-- always-on:start -->';
 const ALWAYS_ON_END = '<!-- always-on:end -->';
 
@@ -152,9 +146,8 @@ function checkSkill(dir) {
     warn(where, 'body is very short; a skill this thin usually belongs in the project instruction file instead');
   }
 
-  checkAlwaysOnBlock(where, raw);
+  checkAlwaysOnBlock(where, raw, dir);
 
-  // Rules that moved into reference files still have to hold there.
   for (const ref of referenceFiles(dir)) {
     const refRaw = readFileSync(ref, 'utf8');
     const refWhere = relative(ROOT, ref);
@@ -166,7 +159,6 @@ function checkSkill(dir) {
   }
 }
 
-// Every .md file under the skill directory other than SKILL.md itself.
 function referenceFiles(dir) {
   const out = [];
   const walk = (d) => {
@@ -180,9 +172,7 @@ function referenceFiles(dir) {
   return out;
 }
 
-// The block between the always-on markers is printed into every session by the
-// session-start hook, so its size decides whether the style arrives at all.
-function checkAlwaysOnBlock(where, raw) {
+function checkAlwaysOnBlock(where, raw, dir) {
   const start = raw.indexOf(ALWAYS_ON_START);
   const end = raw.indexOf(ALWAYS_ON_END);
   if (start === -1 && end === -1) return;
@@ -195,11 +185,21 @@ function checkAlwaysOnBlock(where, raw) {
     return;
   }
   const size = raw.slice(start + ALWAYS_ON_START.length, end).length;
-  if (size > ALWAYS_ON_ERROR) {
-    err(where, `always-on block is ${size} characters; over ${ALWAYS_ON_ERROR} it risks the ${HOOK_OUTPUT_CAP}-character hook injection cap, past which Claude Code injects only a 2KB preview and silently drops the rest of the writing style`);
+  const json = hookEmitsJson(join(dir, '..', '..', 'hooks'));
+  if (!json && size > PLAIN_STDOUT_ERROR) {
+    err(where, `always-on block is ${size} characters and no hook emits it as hookSpecificOutput.additionalContext; Claude Code truncates oversized plain hook stdout to a 2KB preview and saves the rest to a file, silently dropping most of the writing style. Emit JSON, or keep the block under ${PLAIN_STDOUT_ERROR} characters`);
   } else if (size > ALWAYS_ON_COMFORTABLE) {
-    warn(where, `always-on block is ${size} characters; under ${ALWAYS_ON_COMFORTABLE} keeps room under the ${HOOK_OUTPUT_CAP}-character hook injection cap and keeps the per-session cost down`);
+    warn(where, `always-on block is ${size} characters, which every session pays for; roughly ${Math.ceil(size / 4)} tokens`);
   }
+}
+
+function hookEmitsJson(hooksDir) {
+  if (!existsSync(hooksDir)) return false;
+  return readdirSync(hooksDir).some((f) => {
+    const full = join(hooksDir, f);
+    if (!statSync(full).isFile()) return false;
+    return readFileSync(full, 'utf8').includes('hookSpecificOutput');
+  });
 }
 
 function checkJson(file, label) {
