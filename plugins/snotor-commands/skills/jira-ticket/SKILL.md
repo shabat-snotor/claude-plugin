@@ -53,6 +53,27 @@ The opening specification is where this fails most often. Three dense paragraphs
 
 When you have a large investigation behind the ticket, resist dumping it in. Compress to the decision and the direction. Cite a representative file or two, not every occurrence. If exhaustive detail is genuinely needed, that is a separate doc, not the ticket body.
 
+## What, not how: no Technical Notes, no prescribed solution
+
+A ticket says what must exist when it is done. How to build it is the implementer's decision, made with the code in front of them.
+
+**Never add a Technical Notes section**, under that name or any of its disguises: "Implementation", "Implementation notes", "Technical approach", "Proposed solution", "How to build it", "Suggested design". The templates carry the only sections a ticket has; a section not in the template does not get added. If the raw material handed to you contains such a section, do not carry it over: mine it for the requirement it implies and drop the rest.
+
+Also out of the body, wherever they appear:
+
+- A chosen algorithm, data structure, or design pattern.
+- New table, column, class, or function names to create, and the shape of a new schema or interface.
+- A library or package to use, or a proposed code snippet.
+- Step-by-step build instructions, or the layers of one change spelled out (data-transfer object, then service, then controller).
+
+What stays, because it is not implementation:
+
+- **Naming what already exists.** Existing tables, endpoints, config keys, and linked file references are how the reader finds the ground the work sits on, and the plain-language rule still applies: real identifiers in backticks, not abstract paraphrases of the code.
+- **Where the work lands.** Required changes names services, applications, screens, and key files as direction. Naming the area is not designing the change.
+- **A real external constraint**, stated as a constraint and not as an instruction: an integration with a named third-party service, a security or compliance requirement, backward compatibility with an existing API or stored data. One line, in the specification or as an acceptance criterion.
+
+The test before any sentence goes in: could a competent developer reasonably build this a different way and still satisfy the ticket? If yes, the sentence is prescribing a solution, and the ticket should state the outcome it was reaching for instead. "Cache the lookup in Valkey with a 60 second expiry" becomes "repeat lookups within the same minute do not re-query the database".
+
 ## Splitting: only along a real seam, never to hit a number
 
 Default to one ticket. Splitting is justified only when the work has a natural seam, meaning each piece is something a developer could pick up, finish, and have verified on its own. These are real seams:
@@ -87,11 +108,11 @@ When you do split, produce complete drafts for every piece, each self-contained 
 
 People will hand you all sorts of raw material. Here's how to handle it:
 
-- **Rough notes or brain dump**: Extract the core intent. Ask yourself "what is this person actually trying to get done?" and build the ticket around that. Fill in reasonable implementation notes and edge cases based on what you can infer - but flag anything you're guessing about.
+- **Rough notes or brain dump**: Extract the core intent. Ask yourself "what is this person actually trying to get done?" and build the ticket around that. Fill in the edge cases you can infer - but flag anything you're guessing about, and state the required outcome rather than the implementation you imagined for it.
 
 - **Conversation excerpt or Slack thread**: Distill the decision and action items. Strip out the back-and-forth and extract the agreed-upon scope. If there were unresolved questions in the conversation, surface them in Edge Cases.
 
-- **Existing vague ticket that needs rewriting**: Preserve the original intent but restructure into the standard sections. Add specificity where the original was hand-wavy. If the original ticket is ambiguous enough that you're not sure what it means, ask the user which reading is right rather than shipping a draft built on a guess.
+- **Existing vague ticket that needs rewriting**: Preserve the original intent but restructure into the standard sections. Add specificity where the original was hand-wavy. Drop any Technical Notes or implementation section the original carried, keeping only the requirement it was really asking for; added specificity means a sharper outcome, never a prescribed solution. If the original ticket is ambiguous enough that you're not sure what it means, ask the user which reading is right rather than shipping a draft built on a guess.
 
 ## Code formatting and links
 
@@ -181,7 +202,7 @@ This applies hardest to **sibling tickets in the same draft set**: never "ticket
 ## What not to do
 
 - Don't pad tickets with boilerplate or filler. If a section would just say "N/A" or repeat the title, leave it out.
-- Don't over-specify implementation details - leave room for the implementer's judgment.
+- Don't over-specify implementation details - leave room for the implementer's judgment, and never add a Technical Notes section or any equivalent (see "What, not how").
 - Don't invent requirements that weren't in the input. When something is ambiguous, ask the user in chat and write the answer into the ticket. Never make the assumption silently, and never park the ambiguity in the ticket body as an open question (see "Tone and style").
 - Don't use the user story format ("As a X, I want Y, so that Z") unless the user specifically asks for it - it often adds ceremony without clarity.
 - Don't create issues in the tracker, or run the Jira API discovery calls that lead there, unless the user explicitly asked for tracker creation. Default to producing the drafts. (See "Drafting vs. creating.")

@@ -37,8 +37,10 @@ Section guidance:
   blown - cut the restatement, not the bullet.
 - **Required changes** - where the work lands (services, applications,
   endpoints, screens, key files) as short directional bullets. Direction, not
-  a spec. Omit when the path is obvious; trust the implementer with the
-  details.
+  a spec: each bullet names an area to change and what must be true there,
+  never how to build it. No new class, table, or column names to create, no
+  chosen library, no code snippet, no ordered build steps. Omit when the path
+  is obvious; trust the implementer with the details.
 - **Acceptance Criteria** - checkable statements that define done, one
   observable outcome each, verifiable by a reviewer or tester. Phrasing each
   as precondition, action, and outcome helps both the tester and whoever
@@ -49,6 +51,10 @@ Section guidance:
   accessibility criteria for the affected screens: keyboard operability,
   screen-reader naming and state announcements, focus behaviour, and text
   scaling. Accessibility is part of done, not a follow-up ticket.
+
+No section outside this list is ever added, and that includes Technical
+Notes under any of its names (Implementation, Technical approach, Proposed
+solution). See the skill's "What, not how" section.
 
 Output skeleton:
 
