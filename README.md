@@ -61,9 +61,11 @@ If Claude cannot run git where you are, which is the normal case in Cowork, step
 
 ## The writing style is always on
 
-The `unslop` skill doubles as the house writing style. In Claude Code the plugin ships a SessionStart hook (`plugins/snotor-commands/hooks/hooks.json`, which runs `hooks/unslop-context.sh`) that prints the skill's rules into the session context at startup, on resume, and after every compaction. Every reply, commit message, pull request description, ticket, and document then follows them without anyone invoking anything. `/snotor-commands:unslop` runs the same rules as an explicit edit pass over a given text.
+The `unslop` skill doubles as the house writing style. In Claude Code the plugin ships a SessionStart hook (`plugins/snotor-commands/hooks/hooks.json`, which runs `hooks/unslop-context.sh`) that feeds the skill's rules into the session context at startup, on resume, and after every compaction. Every reply, commit message, pull request description, ticket, and document then follows them without anyone invoking anything. `/snotor-commands:unslop` runs the same rules as an explicit edit pass over a given text.
 
-The rules live once, in `skills/unslop/SKILL.md` between the `always-on:start` and `always-on:end` markers. The hook extracts that block and nothing else, so editing the skill edits the always-on style too. Project conventions (dash character, spelling, commit format, attribution trailers) sit in the skill's Project settings block like every other skill here.
+The rules live once, in `skills/unslop/SKILL.md` between the `always-on:start` and `always-on:end` markers. The hook extracts that block and nothing else, so editing the skill edits the always-on style too. A condensed form of the rules sits in that block; `skills/unslop/references/rules.md` holds them in full, with examples, and the `/unslop` edit pass reads it.
+
+The hook hands the block over as JSON, in `hookSpecificOutput.additionalContext`. Do not change it to print the block on stdout. Claude Code truncates oversized plain hook stdout to a 2000 character preview and writes the rest to a file, so most of the style stops arriving and nothing reports it, which is exactly how the block sat dead from 2026-09-05 until 2026-09-06. `scripts/validate.mjs` fails the build if a large always-on block is left on the plain stdout path. Project conventions (dash character, spelling, commit format, attribution trailers) sit in the skill's Project settings block like every other skill here.
 
 The hook is a Claude Code mechanism. In Cowork and on claude.ai the skill still installs and triggers by its description when someone asks for a writing pass, but nothing runs at session start there.
 

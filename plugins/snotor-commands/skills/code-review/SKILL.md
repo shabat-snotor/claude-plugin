@@ -50,8 +50,15 @@ Categories:
 
 Rules for the block:
 - `Where` must carry both `file:line` and the enclosing function, class, or
-  method name. If the enclosing symbol cannot be named, read more context
-  first.
+  method name. The name is the half that survives: a review UI anchors a
+  comment on the old side of the diff, so a post-change line number can land
+  inside a block the same commit deleted, and the author reads the finding as
+  already fixed. If the enclosing symbol cannot be named, read more context
+  first. When nothing encloses the line (a top-level constant, a schema field,
+  a bare SQL statement), name that instead. When the defect is at a call site
+  rather than in the declaration, name both: `caller() calling helper()`.
+- Line numbers are post-change. Say so explicitly whenever a finding quotes one
+  from the pre-change side.
 - Build the permalink from the code host in Project settings. Get the full SHA
   with `git rev-parse <branch/HEAD>` and run it as its own step: never put
   `$(...)` inside the URL, it renders literally. Derive owner, group, and
@@ -60,6 +67,14 @@ Rules for the block:
   hosts. Give at least one line of context on each side, so a comment on line
   62 spans lines 60 to 64.
 - The `Suggested comment` is required even for small or nit findings.
+- `What` never stops at the mechanism. Describing what the code does without
+  naming what breaks is half a finding: say which caller, input, or race
+  reaches the defect, and what the author or the user sees when it does.
+- Keep the finding's own symbol as the grammatical subject. A contrast with
+  some other function ("only `addMember()` re-reads after locking") goes at the
+  end, after the defect and its consequence, never in front of them.
+- No pronoun may point at machinery the author has to reconstruct: "it", "that
+  read", "the lock". Name the thing.
 - Order findings most severe first within each axis; correctness outranks
   cleanup, altitude, or convention findings.
 
@@ -122,7 +137,10 @@ full, it has no other access to it):
 ## Step 3: spawn both sub-agents in parallel
 
 Send both `Agent` tool calls in a single message so they run concurrently.
-Neither sub-agent sees the other's context.
+Neither sub-agent sees the other's context. Paste the whole output contract
+above, the block shape and every rule under it, into both prompts verbatim: a
+sub-agent cannot read this file, so a brief that only refers to the format gets
+free prose back.
 
 **Standards sub-agent** gets:
 - The diff command, the commit list, and the target.
@@ -163,7 +181,8 @@ Neither sub-agent sees the other's context.
 Present the two reports under `## Standards` and `## Spec` headings, each an
 ordered list of paste-ready blocks, most severe first within that axis. Do not
 merge or rerank across axes. End with one line per axis: total findings and
-the worst issue within that axis, if any. Never pick one overall winner across
+the worst issue within that axis, if any, naming its symbol there too and not
+the line number alone. Never pick one overall winner across
 axes, that reranking is what the separation exists to prevent.
 
 ## Step 5: writing pass (required)
